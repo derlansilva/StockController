@@ -4,13 +4,15 @@ public class Product {
     private Long id ;
     private String sku;
     private String description;
+    private String price;
 
     public Product() {}
 
-    public Product(Long id, String sku, String description) {
+    public Product(Long id, String sku, String description , String price) {
         this.id = id;
         this.sku = sku;
         this.description = description;
+        this.price = price;
     }
 
 
@@ -36,5 +38,13 @@ public class Product {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
     }
 }
