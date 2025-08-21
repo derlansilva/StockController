@@ -4,6 +4,8 @@ import com.example.stockmanager.domain.model.Product;
 import com.example.stockmanager.infrastructure.persistence.JpaProductRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductServiceImpl {
     private final JpaProductRepository jpaProductRepository;
@@ -19,5 +21,9 @@ public class ProductServiceImpl {
     public Product findProductBySku(String sku) {
         return jpaProductRepository.findBySku(sku)
                 .orElseThrow( () -> new IllegalArgumentException("Product not found"));
+    }
+
+    public List<Product> findAllProducts(){
+        return jpaProductRepository.findAll();
     }
 }

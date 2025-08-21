@@ -1,11 +1,14 @@
 package com.example.stockmanager.infrastructure.persistence;
 
 import com.example.stockmanager.domain.model.Product;
+import com.example.stockmanager.domain.service.ProductService;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -14,14 +17,18 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 @Repository
-public class JpaProductRepository {
+public class JpaProductRepository implements ProductService {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public JpaProductRepository(JdbcTemplate jdbcTemplate) {
+    private final JpaStockRepository stockRepository;
+
+    public JpaProductRepository(JdbcTemplate jdbcTemplate, JpaStockRepository stockRepository) {
         this.jdbcTemplate = jdbcTemplate;
+        this.stockRepository = stockRepository;
     }
 
+    @Override
     public Product save(Product product) {
         String sql = "INSERT INTO products (sku , description , price) VALUES (? ,? , ?) ";
 
@@ -38,24 +45,46 @@ public class JpaProductRepository {
         if(keyHolder.getKey() != null) {
             product.setId(keyHolder.getKey().longValue());
         }
+
+        System.out.println("verificando o produto "  + product.getId());
+        stockRepository.createNewStock(product);
+
         return product;
     }
 
-
+    @Override
     public Optional<Product> findBySku(String sku) {
         String sql = "SELECT id, sku, description, price FROM products WHERE sku = ?";
 
         try{
-            Product product = jdbcTemplate.queryForObject(sql, productRowMapper , sql);
+            Product product = jdbcTemplate.queryForObject(sql, productRowMapper , sku);
             return Optional.ofNullable(product);
         }catch (EmptyResultDataAccessException e){
             return Optional.empty();
         }
     }
-/*
-    public List<Product> findAll() {}
 
-    public void deleteBySku(String sku) {}*/
+    public List<Product> findAll() {
+        try {
+            String sql = "SELECT * FROM products";
+
+            return jdbcTemplate.query(sql, new BeanPropertyRowMapper<Product>(Product.class));
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void updateProduct(Product product) {
+
+    }
+
+    @Override
+    public void deleteProduct(Product product) {
+
+    }
+
+
 
     private final RowMapper<Product> productRowMapper = (rs, rowNum) -> {
         Product product = new Product();
