@@ -7,12 +7,10 @@ import com.example.stockmanager.domain.model.Product;
 import com.example.stockmanager.domain.model.Stock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@RestController("/stock")
+@RestController
+@RequestMapping("/stock")
 public class StockController {
 
     private final ProductServiceImpl productService;
@@ -25,10 +23,10 @@ public class StockController {
     }
 
 
-    @PostMapping("/add")
-    public ResponseEntity<Product> addProductStock(@PathVariable String sku , @RequestBody long quantity) {
+    @PutMapping("/update/{sku}")
+    public ResponseEntity<Product> updateStockAvailable(@PathVariable("sku") String sku , @RequestParam("quantity") long quantity) {
         Product product = productService.findProductBySku(sku);
-        stockService.addProductStrock(product , quantity);
+        stockService.changeStockAvailabel(product , quantity);
 
         return ResponseEntity.ok(product);
     }

@@ -1,14 +1,17 @@
 package com.example.stockmanager.infrastructure.persistence;
 
 import com.example.stockmanager.application.dto.ProductWithStockDto;
+import com.example.stockmanager.application.service.ProductServiceImpl;
 import com.example.stockmanager.domain.model.Product;
 import com.example.stockmanager.domain.model.Stock;
+import com.example.stockmanager.domain.repository.ProductRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,6 +22,8 @@ import java.util.Optional;
 @Repository
 public class JpaStockRepository {
     private final JdbcTemplate jdbcTemplate;
+
+    private ProductServiceImpl productService;
 
     public JpaStockRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -62,6 +67,19 @@ public class JpaStockRepository {
         }
     }
 
+    @Transactional
+    public void changeAvailableStock(Product product , long quantity ){
+        String sql= "UPDATE stocks SET available_quantity = available_quantity + ? WHERE product_id = ?";
+
+        int affectedRows = jdbcTemplate.update(sql , quantity , product.getId() );
+
+
+        if(affectedRows == 0){
+            throw new IllegalArgumentException("Nenhum Registro de estoque encontrado");
+        }
+        System.out.println("Estoque do produto ID " + product.getId() + " atualizado. Linhas afetadas: " + affectedRows);
+
+    }
 
     private static class StockRowMapper implements RowMapper<Stock>{
 

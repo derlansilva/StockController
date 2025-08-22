@@ -29,5 +29,8 @@ public class StockServiceImpl {
         stockRepository.createNewStock(product);
     }
 
+    public void changeStockAvailabel(Product product , long quantity){
+        stockRepository.changeAvailableStock(product , quantity);
+    }
 
 }
