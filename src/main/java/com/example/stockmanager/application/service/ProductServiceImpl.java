@@ -1,5 +1,6 @@
 package com.example.stockmanager.application.service;
 
+import com.example.stockmanager.application.dto.ProductWithStockDto;
 import com.example.stockmanager.domain.model.Product;
 import com.example.stockmanager.infrastructure.persistence.JpaProductRepository;
 import org.springframework.stereotype.Service;
@@ -26,4 +27,10 @@ public class ProductServiceImpl {
     public List<Product> findAllProducts(){
         return jpaProductRepository.findAll();
     }
+
+
+    public ProductWithStockDto findProductAndStockBySku(String sku) {
+        return jpaProductRepository.findProductAndStockBySku(sku);
+    }
+
 }

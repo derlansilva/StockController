@@ -2,16 +2,15 @@ package com.example.stockmanager.domain.model;
 
 public class Stock {
     private long id ;
-    private Product product ;
     private long availableQuantity ;
     private  long reservedQuantity ;
     private long lostQuantity ;
 
     public  Stock(){}
 
-    public Stock(long id, Product product, long availableQuantity, long reservedQuantity, long lostQuantity) {
+    public Stock(long id, long availableQuantity, long reservedQuantity, long lostQuantity) {
         this.id = id;
-        this.product = product;
+
         this.availableQuantity = availableQuantity;
         this.reservedQuantity = reservedQuantity;
         this.lostQuantity = lostQuantity;
@@ -24,14 +23,6 @@ public class Stock {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
     }
 
     public long getAvailableQuantity() {

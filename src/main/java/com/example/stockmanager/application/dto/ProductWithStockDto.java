@@ -1,26 +1,28 @@
-package com.example.stockmanager.domain.model;
+package com.example.stockmanager.application.dto;
 
-public class Product {
-    private Long id ;
+import com.example.stockmanager.domain.model.Product;
+import com.example.stockmanager.domain.model.Stock;
+
+public class ProductWithStockDto {
+    private long id ;
     private String sku;
     private String description;
     private String price;
+    private Stock stock;
 
-    public Product() {}
-
-    public Product(Long id, String sku, String description , String price) {
+    public ProductWithStockDto(long id, String sku, String description, String price, Stock stock) {
         this.id = id;
         this.sku = sku;
         this.description = description;
         this.price = price;
+        this.stock = stock;
     }
 
-
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -48,5 +50,11 @@ public class Product {
         this.price = price;
     }
 
+    public Stock getStock() {
+        return stock;
+    }
 
+    public void setStock(Stock stock) {
+        this.stock = stock;
+    }
 }

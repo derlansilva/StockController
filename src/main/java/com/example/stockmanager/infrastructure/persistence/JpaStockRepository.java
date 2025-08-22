@@ -1,14 +1,20 @@
 package com.example.stockmanager.infrastructure.persistence;
 
+import com.example.stockmanager.application.dto.ProductWithStockDto;
 import com.example.stockmanager.domain.model.Product;
 import com.example.stockmanager.domain.model.Stock;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Optional;
 
 @Repository
 public class JpaStockRepository {
@@ -38,12 +44,38 @@ public class JpaStockRepository {
 
         Stock stock = new Stock();
         stock.setId(stockId);
-        stock.setProduct(product);
         stock.setAvailableQuantity(0);
         stock.setReservedQuantity(0);
         stock.setLostQuantity(0);
 
         return stock;
+    }
+
+    public Optional<Stock> findbyProductId(Long productId ){
+        String sql = "SELECT * FROM stocks WHERE product_id = ?";
+
+        try {
+            Stock stock = jdbcTemplate.queryForObject(sql , new StockRowMapper() , productId );
+            return Optional.of(stock);
+        }catch (EmptyResultDataAccessException e){
+            return Optional.empty();
+        }
+    }
+
+
+    private static class StockRowMapper implements RowMapper<Stock>{
+
+        @Override
+        public Stock mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Stock stock = new Stock();
+
+            stock.setId(rs.getLong("id"));
+            stock.setAvailableQuantity(rs.getLong("available_quantity"));
+            stock.setReservedQuantity(rs.getLong("reserved_quantity"));
+            stock.setLostQuantity(rs.getLong("lost_quantity"));
+
+            return stock;
+        }
     }
 
 

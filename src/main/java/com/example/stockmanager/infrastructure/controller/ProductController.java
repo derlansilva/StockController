@@ -1,6 +1,7 @@
 package com.example.stockmanager.infrastructure.controller;
 
 
+import com.example.stockmanager.application.dto.ProductWithStockDto;
 import com.example.stockmanager.application.service.ProductServiceImpl;
 import com.example.stockmanager.application.service.StockServiceImpl;
 import com.example.stockmanager.domain.model.Product;
@@ -30,9 +31,9 @@ public class ProductController {
     }
 
     @GetMapping("/{sku}")
-    public ResponseEntity<Product> getProductBySku(@PathVariable("sku") String sku) {
+    public ResponseEntity<ProductWithStockDto> getProductBySku(@PathVariable("sku") String sku) {
         System.out.println("Sku " + sku);
-        Product product = productService.findProductBySku(sku);
+        ProductWithStockDto product = productService.findProductAndStockBySku(sku);
 
         return ResponseEntity.ok(product);
 

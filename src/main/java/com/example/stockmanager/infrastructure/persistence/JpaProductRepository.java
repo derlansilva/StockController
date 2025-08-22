@@ -1,6 +1,9 @@
 package com.example.stockmanager.infrastructure.persistence;
 
+import com.example.stockmanager.application.dto.ProductWithStockDto;
+import com.example.stockmanager.application.service.StockServiceImpl;
 import com.example.stockmanager.domain.model.Product;
+import com.example.stockmanager.domain.model.Stock;
 import com.example.stockmanager.domain.service.ProductService;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -21,11 +24,13 @@ public class JpaProductRepository implements ProductService {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final JpaStockRepository stockRepository;
 
-    public JpaProductRepository(JdbcTemplate jdbcTemplate, JpaStockRepository stockRepository) {
+    private final StockServiceImpl stockService;
+
+    public JpaProductRepository(JdbcTemplate jdbcTemplate, StockServiceImpl stockService) {
         this.jdbcTemplate = jdbcTemplate;
-        this.stockRepository = stockRepository;
+
+        this.stockService = stockService;
     }
 
     @Override
@@ -47,7 +52,7 @@ public class JpaProductRepository implements ProductService {
         }
 
         System.out.println("verificando o produto "  + product.getId());
-        stockRepository.createNewStock(product);
+        stockService.createNewStock(product);
 
         return product;
     }
@@ -63,6 +68,15 @@ public class JpaProductRepository implements ProductService {
             return Optional.empty();
         }
     }
+
+    public ProductWithStockDto findProductAndStockBySku(String sku ){
+        Product product = findBySku(sku).orElseThrow(() -> new IllegalArgumentException("Product not found"));
+
+        Stock stock = stockService.findByProductId(product.getId()).orElseThrow(()-> new IllegalArgumentException("Stock not found"));
+
+        return new ProductWithStockDto(product.getId() , product.getSku() , product.getDescription() , product.getPrice() , stock );
+    }
+
 
     public List<Product> findAll() {
         try {

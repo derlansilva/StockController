@@ -1,8 +1,11 @@
 package com.example.stockmanager.application.service;
 
 import com.example.stockmanager.domain.model.Product;
+import com.example.stockmanager.domain.model.Stock;
 import com.example.stockmanager.infrastructure.persistence.JpaStockRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class StockServiceImpl {
@@ -17,4 +20,14 @@ public class StockServiceImpl {
     public void addProductStrock(Product product , long quantity) {
 
     }
+
+    public Optional<Stock> findByProductId(long id ){
+        return stockRepository.findbyProductId(id);
+    }
+
+    public void createNewStock(Product product){
+        stockRepository.createNewStock(product);
+    }
+
+
 }
