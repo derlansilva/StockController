@@ -2,6 +2,7 @@ package com.example.stockmanager.infrastructure.persistence;
 
 import com.example.stockmanager.application.dto.ProductWithStockDto;
 import com.example.stockmanager.application.service.ProductServiceImpl;
+import com.example.stockmanager.domain.model.MovementType;
 import com.example.stockmanager.domain.model.Product;
 import com.example.stockmanager.domain.model.Stock;
 import com.example.stockmanager.domain.repository.ProductRepository;
@@ -68,7 +69,7 @@ public class JpaStockRepository {
     }
 
     @Transactional
-    public void changeAvailableStock(Product product , long quantity ){
+    public void stockEntry(Product product , long quantity ){
         String sql= "UPDATE stocks SET available_quantity = available_quantity + ? WHERE product_id = ?";
 
         int affectedRows = jdbcTemplate.update(sql , quantity , product.getId() );
@@ -80,6 +81,8 @@ public class JpaStockRepository {
         System.out.println("Estoque do produto ID " + product.getId() + " atualizado. Linhas afetadas: " + affectedRows);
 
     }
+
+
 
     private static class StockRowMapper implements RowMapper<Stock>{
 
@@ -96,5 +99,41 @@ public class JpaStockRepository {
         }
     }
 
+    public void transferStock(Product product , long quantity , MovementType fromStockType , MovementType toStockType){
+        if(product.getId() == null || fromStockType == null || toStockType ==null){
+            throw new IllegalArgumentException("Ids e tipos de estoque não podem ser nulos");
+        }
+
+        String fromColumn = getColumnNameForMovementType(fromStockType);
+        String toColumn = getColumnNameForMovementType(toStockType);
+
+        if (fromColumn == null || toColumn == null) {
+            throw new IllegalArgumentException("Tipo de estoque inválido para transferência.");
+        }
+
+        String sql = String.format(
+                "UPDATE stocks SET %s = %s - ? , %s = %s+ ? WHERE product_id = ?" ,
+                fromColumn , fromColumn , toColumn , toColumn
+        );
+
+        int affectedRows = jdbcTemplate.update(sql , quantity , quantity , product.getId());
+
+        if (affectedRows == 0) {
+            throw new IllegalArgumentException("Nenhum registro de estoque encontrado ou quantidade insuficiente.");
+        }
+
+    }
+
+    private String getColumnNameForMovementType(MovementType type){
+        switch (type){
+            case DISPONIVEL: return "available_quantity";
+
+            case RESERVA: return "reserved_quantity";
+
+            case PERDA: return "lost_quantity";
+
+            default: return null;
+        }
+    }
 
 }

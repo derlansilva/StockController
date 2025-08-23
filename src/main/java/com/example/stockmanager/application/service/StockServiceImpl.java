@@ -1,5 +1,6 @@
 package com.example.stockmanager.application.service;
 
+import com.example.stockmanager.domain.model.MovementType;
 import com.example.stockmanager.domain.model.Product;
 import com.example.stockmanager.domain.model.Stock;
 import com.example.stockmanager.infrastructure.persistence.JpaStockRepository;
@@ -17,10 +18,6 @@ public class StockServiceImpl {
     }
 
 
-    public void addProductStrock(Product product , long quantity) {
-
-    }
-
     public Optional<Stock> findByProductId(long id ){
         return stockRepository.findbyProductId(id);
     }
@@ -29,8 +26,15 @@ public class StockServiceImpl {
         stockRepository.createNewStock(product);
     }
 
-    public void changeStockAvailabel(Product product , long quantity){
-        stockRepository.changeAvailableStock(product , quantity);
+    public void stockEntry(Product product , long quantity){
+        stockRepository.stockEntry(product , quantity);
     }
 
+    public void stockExit(Product product , long quantity){
+
+    }
+
+    public void transferStock(Product product , long quantity , MovementType from , MovementType to){
+        stockRepository.transferStock(product , quantity , from , to);
+    }
 }

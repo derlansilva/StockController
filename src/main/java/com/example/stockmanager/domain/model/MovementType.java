@@ -2,11 +2,11 @@ package com.example.stockmanager.domain.model;
 
 public enum MovementType {
 
-    ENTRADA("01"),
+    DISPONIVEL("01"),
     SAIDA("02"),
-    TRANSFERENCIA("03"),
-    PERDA("04"),
-    RESERVA("011");
+    RESERVA("03"),
+    PERDA("04");
+
 
     private final String code;
 
