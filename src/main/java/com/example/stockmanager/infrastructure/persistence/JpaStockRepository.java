@@ -57,7 +57,7 @@ public class JpaStockRepository {
         return stock;
     }
 
-    public Optional<Stock> findbyProductId(Long productId ){
+    public Optional<Stock> findStockbyProductId(Long productId ){
         String sql = "SELECT * FROM stocks WHERE product_id = ?";
 
         try {
@@ -107,20 +107,29 @@ public class JpaStockRepository {
         String fromColumn = getColumnNameForMovementType(fromStockType);
         String toColumn = getColumnNameForMovementType(toStockType);
 
+
         if (fromColumn == null || toColumn == null) {
             throw new IllegalArgumentException("Tipo de estoque inválido para transferência.");
         }
+
 
         String sql = String.format(
                 "UPDATE stocks SET %s = %s - ? , %s = %s+ ? WHERE product_id = ?" ,
                 fromColumn , fromColumn , toColumn , toColumn
         );
 
-        int affectedRows = jdbcTemplate.update(sql , quantity , quantity , product.getId());
+        int value = getValueColumn(fromColumn , product.getId());
+        if(value >= quantity){
+            int affectedRows = jdbcTemplate.update(sql , quantity , quantity , product.getId());
 
-        if (affectedRows == 0) {
-            throw new IllegalArgumentException("Nenhum registro de estoque encontrado ou quantidade insuficiente.");
+            if (affectedRows == 0) {
+                throw new IllegalArgumentException("Nenhum registro de estoque encontrado ou quantidade insuficiente.");
+            }
+        }else{
+            throw new IllegalArgumentException("ESTOQUE ESTA 0");
         }
+
+
 
     }
 
@@ -134,6 +143,17 @@ public class JpaStockRepository {
 
             default: return null;
         }
+    }
+
+    private int  getValueColumn(String from , long id){
+        String sql = String.format("SELECT %s FROM stocks WHERE product_id = ?" , from);
+
+        try {
+            return jdbcTemplate.queryForObject(sql , Integer.class , id);
+        }catch (EmptyResultDataAccessException e){
+           return 0;
+        }
+
     }
 
 }
