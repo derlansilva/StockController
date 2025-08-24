@@ -70,8 +70,10 @@ A arquitetura do projeto é organizada em classes com responsabilidades bem defi
 ```mermaid
 classDiagram
     class Product {
+      -Long id
       -String sku
       -String description
+      -String price
     }
 
     class Stock {
