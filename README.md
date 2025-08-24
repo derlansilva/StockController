@@ -71,7 +71,6 @@ A arquitetura do projeto é organizada em classes com responsabilidades bem defi
 classDiagram
     class Product {
       -String sku
-      -String name
       -String description
     }
 
