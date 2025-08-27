@@ -10,16 +10,18 @@ O sistema oferece os seguintes endpoints e funcionalidades:
 
 ### **Produtos**
 
-* `POST /api/products`: Cria um novo produto no sistema.
-* `GET /api/products/{sku}`: Busca e retorna as informações de um produto pelo seu SKU.
-* `GET /api/products`: Lista todos os produtos cadastrados.
-* `DELETE /api/products/{sku}`: Deleta um produto do sistema.
+* `POST /product`: Cria um novo produto no sistema.
+* `GET /product/{sku}`: Busca e retorna as informações de um produto pelo seu SKU.
+* `GET /product/all`: Lista todos os produtos cadastrados.
+* `DELETE /products/{sku}`: Deleta um produto do sistema.
 
 ### **Estoque**
 
-* `POST /api/stocks/transfer`: Realiza uma transferência de estoque entre diferentes tipos (ex: de disponível para reservado). O corpo da requisição deve especificar a origem, destino, SKU e quantidade.
-* `PUT /api/products/{sku}/movement`: Realiza uma movimentação de estoque (entrada, saída, etc.) para um produto específico.
-* `GET /api/stocks/{sku}/quantity`: Retorna a quantidade disponível de um produto.
+* `PUT /products/entry/{sku}/`: Realiza uma movimentação de entrada para um produto específico.
+* `PUT /products/exit/{sku}`: Realiza uma movimentação de saida para um produto específico.
+* `POST /stocks/transfer`: Realiza uma transferência de estoque entre diferentes tipos (ex: de disponível para reservado). O corpo da requisição deve especificar a origem, destino, SKU e quantidade.
+* `PUT /products/{sku}/movement`: Realiza uma movimentação de estoque (entrada, saída, etc.) para um produto específico.
+
 
 ## 🛠️ Tecnologias Utilizadas
 
